@@ -1,0 +1,33 @@
+pipeline:
+  test:
+    image: node:${NODE_VERSION}
+    commands:
+      - npm install
+      - npm run test
+
+# Add webhook-rocketchat to your pipeline
+  webhook-rocketchat:
+    image: plugins/webhook
+    urls: http://192.168.1.143:8080/hooks/HLWwFExHw6LF882Wb/5EeNLW4BWFPqYetEu75AxiKrARPLLWCiZK3K3fF88jZA37Hw
+    method: POST
+    content_type: application/json
+    template: |
+      {
+        "hook": "Drone CI/CD",
+        "event": "{{ build.event }}",
+        "owner": "{{ repo.owner }}",
+        "repo": "{{ repo.name }}",
+        "branch": "{{ build.branch }}",
+        "author": "{{ build.author }}",
+        "link": "{{ build.link }}",
+        "status": "{{ build.status }}"
+      }
+    debug: true
+    when:
+      status: [ success, failure ]
+# Add webhook-rocketchat to your pipeline
+
+matrix:
+  NODE_VERSION:
+    - latest
+    - 8
