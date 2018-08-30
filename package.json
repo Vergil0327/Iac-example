@@ -1,0 +1,23 @@
+{
+  "name": "relajet-server-ci-cd",
+  "version": "1.0.0",
+  "description": "init script (under this directory): $ `docker-compose up -d`",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "node-cmd": "^3.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://114.32.164.241:10078/RELAJET/RelaJet-Server-CI-CD.git"
+  },
+  "author": "",
+  "license": "ISC"
+}
