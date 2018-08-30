@@ -9,7 +9,7 @@ pipeline:
 # Add webhook-rocketchat to your pipeline
   webhook-rocketchat:
     image: plugins/webhook
-    urls: http://192.168.1.143:8080/hooks/HLWwFExHw6LF882Wb/5EeNLW4BWFPqYetEu75AxiKrARPLLWCiZK3K3fF88jZA37Hw
+    secrets: [webhook_urls]
     method: POST
     content_type: application/json
     template: |
