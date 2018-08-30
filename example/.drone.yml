@@ -5,6 +5,7 @@ pipeline:
       - npm install
       - npm run test
 
+# Notify build status to rocketchat room
 # Add webhook-rocketchat to your pipeline
   webhook-rocketchat:
     image: plugins/webhook
