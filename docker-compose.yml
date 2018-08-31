@@ -5,7 +5,7 @@ services:
     image: drone/drone:0.8
     labels:
       - "traefik.port=8000"
-      - "traefik.frontend.rule=Host:drone.docker.localhost,${PRIVATE_NETWORK_IP}"
+      - "traefik.frontend.rule=Host:drone.docker.localhost"
     ports:
       - 8000:8000
       - 9000
