@@ -5,7 +5,7 @@ services:
     image: drone/drone:0.8
     labels:
       - "traefik.port=8000"
-      - "traefik.frontend.rule=Host:drone.docker.localhost"
+      - "traefik.frontend.rule=Host:drone.docker.localhost,${PRIVATE_NETWORK_IP}"
     ports:
       - 8000:8000
       - 9000
@@ -24,8 +24,6 @@ services:
 
   drone-agent:
     image: drone/agent:0.8
-    labels:
-      - "traefik.frontend.rule=Host:drone-agent.docker.localhost"
     command: agent
     restart: always
     depends_on:
@@ -42,6 +40,9 @@ services:
     ports:
       - "80:80"     # The HTTP port
       - "8081:8080" # The Web UI (enabled by --api)
+    labels:
+      - "traefik.port=8080"
+      - "traefik.frontend.rule=Host:traefik.docker.localhost"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
       - /dev/null:/traefik.toml
