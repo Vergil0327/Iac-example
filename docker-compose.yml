@@ -6,7 +6,7 @@ services:
     labels:
       - "traefik.frontend.rule=Host:drone.docker.localhost"
     ports:
-      - 8000:8000
+      - 80:8000
       - 9000
     volumes:
       - drone-server-data:/var/lib/drone/
