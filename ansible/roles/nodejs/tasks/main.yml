@@ -1,0 +1,52 @@
+- name: Download NVM
+  become: yes
+  become_method: sudo
+  get_url:
+    url: https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh
+    dest: /tmp/install_nvm.sh
+  tags:
+    - install_nvm
+
+- name: Install NVM
+  shell: bash install_nvm.sh
+  args:
+    chdir: /tmp
+  register: nvm_install_result
+  changed_when: "'is already installed.' not in nvm_install_result.stdout"
+  tags:
+    - install_nvm
+
+- name: Source ~/.bashrc (Register NVM)
+  shell: source ~/.bashrc
+  args:
+    executable: /bin/bash
+  tags:
+    - install_nvm
+
+# Need source bashrc first, or bash can't find nvm command
+- name: Install Node {{ node_version }}
+  shell: |
+    . ~/.nvm/nvm.sh &&
+    nvm install {{ node_version }} &&
+    nvm alias default {{ node_version }}
+  args:
+    creates: ~/.nvm/versions/node/v{{ node_version }}
+    executable: /bin/bash
+  tags:
+    - install_node
+
+- name: Link Executable Path of Node
+  become: yes
+  become_method: sudo
+  file:
+    src:  "/home/ubuntu/.nvm/versions/node/v{{ node_version }}/bin/{{ item }}"
+    dest: "/usr/bin/{{ item }}"
+    state: link
+    force: yes
+    follow: False
+  with_items:
+    - node
+    - npm
+    - npx
+  tags:
+    - install_node

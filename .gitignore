@@ -1,2 +1,14 @@
 node_modules
 .env
+
+# Packer
+packer/.env.sh
+
+# Terraform
+terraform/.env.sh
+terraform/.terraform
+terraform.tfstate
+terraform.tfstate.backup
+
+# private keys
+privateKeyFiles

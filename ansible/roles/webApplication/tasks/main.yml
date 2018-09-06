@@ -1,0 +1,21 @@
+- name: Fetch the Latest Version of Application Code
+  git:
+    repo: "{{ application_repo_url }}"
+    dest: "{{ application_dest }}"
+  register: clone
+  tags: deploy_app
+
+- name: Install Application Dependencies
+  npm:
+    path: "{{ application_dest }}"
+  when: clone.changed # see doc: https://docs.ansible.com/ansible/latest/reference_appendices/common_return_values.html?highlight=changed
+  notify: rebuild web app
+  tags: deploy_app
+
+- name: Create App Dir Under Nginx
+  become: yes
+  become_method: sudo
+  file:
+    path: /var/www/{{ app }}/public
+    state: directory
+  tags: deploy_app

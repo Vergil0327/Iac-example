@@ -1,0 +1,20 @@
+- name: Install Python for Ansible
+  become: yes
+  become_method: sudo
+  raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+  register: output
+  changed_when: output.stdout != ""
+
+- name: Gather Ansible Facts
+  setup: # aka gather_facts
+
+- name: Install Common Packages
+  become: yes
+  become_method: sudo
+  apt: pkg={{ item }} state=present update_cache=yes cache_valid_time=604800
+  with_items:
+    - git
+    - build-essential # prerequisite pkg for nvm
+    - libssl-dev # prerequisite pkg for nvm
+    - upstart
+  tags: common

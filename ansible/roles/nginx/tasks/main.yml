@@ -1,0 +1,97 @@
+# @ref: https://github.com/bscofield/ansible-playbooks
+- name: Install Nginx
+  become: yes
+  become_method: sudo
+  apt:
+    pkg: nginx
+    state: present
+    update_cache: yes
+    cache_valid_time: 604800
+  tags: setup_nginx
+
+- name: Setup Nginx Config Directory
+  file:
+    path: /etc/nginx/{{ item }}
+    state: directory
+  with_items:
+    - sites-available
+    - sites-enabled
+  tags: setup_nginx
+
+- name: Generate Nginx Configuration File
+  become: yes
+  become_method: sudo
+  copy: src=files/nginx.conf
+        dest=/etc/nginx/nginx.conf
+  tags: setup_nginx
+
+- name: Deactivate Default Nginx Site
+  become: yes
+  become_method: sudo
+  file: path=/etc/nginx/sites-enabled/default
+        state=absent
+  tags: setup_nginx
+
+- name: Generate Nginx stub_status Site Config
+  become: yes
+  become_method: sudo
+  copy: src=files/nginx.status.conf
+        dest=/etc/nginx/sites-available/status
+  tags: setup_nginx
+
+- name: Activate Nginx stub_status Site
+  become: yes
+  become_method: sudo
+  file: src=/etc/nginx/sites-available/status
+        dest=/etc/nginx/sites-enabled/status
+        state=link
+  tags: setup_nginx
+
+- name: Add Site For The App
+  become: yes
+  become_method: sudo
+  when: app is defined and nginx_server_name is defined
+  template: src=templates/nginx.site.conf.j2
+            dest=/etc/nginx/sites-available/site
+  tags: setup_nginx
+
+- name: Activate The App
+  become: yes
+  become_method: sudo
+  when: app is defined and nginx_server_name is defined
+  file: src=/etc/nginx/sites-available/site
+        dest=/etc/nginx/sites-enabled/site
+        state=link
+  tags: setup_nginx
+
+- name: Configure Log Rotation
+  become: yes
+  become_method: sudo
+  copy: src=files/nginx.logrotate
+        dest=/etc/logrotate.d/nginx
+  tags: setup_nginx
+
+- name: Copy Nginx Init Script
+  become: yes
+  become_method: sudo
+  copy: src=files/nginx.upstart
+        dest=/etc/init/nginx.conf
+        mode=755
+  tags: setup_nginx
+
+- name: Add ufw Rule
+  become: yes
+  become_method: sudo
+  command: ufw allow 80,443/tcp
+  # Note: ufw isn't enabled at this point
+  tags: setup_nginx
+
+- name: Start Nginx
+  become: yes
+  become_method: sudo
+  service:
+    name: nginx
+    state: restarted
+  tags:
+    - setup_nginx
+    - start_nginx

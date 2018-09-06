@@ -1,0 +1,12 @@
+- name: rebuild web app
+  shell: npm run build
+  args:
+    chdir: "{{ application_dest }}"
+  notify: move dist under nginx
+
+- name: move dist under nginx
+  become: yes
+  become_method: sudo
+  shell: mv * /var/www/{{ app }}/public
+  args:
+    chdir: "{{ application_dest }}/{{ application_dist_folder_name }}"

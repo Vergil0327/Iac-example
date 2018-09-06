@@ -1,0 +1,26 @@
+# Ansible Examples:
+# @see: https://github.com/ansible/ansible-examples
+
+# ubuntu 16.04 ISSUE
+# https://www.josharcher.uk/code/ansible-python-connection-failure-ubuntu-server-1604/
+
+- name: Preinstall Common Packages
+  hosts: all
+  gather_facts: false # Set false to avoid error when python isn't installed on ubuntu
+  remote_user: ubuntu
+
+  pre_tasks:
+    - import_tasks: ./tasks/setup_common_pkg.yml
+
+  roles:
+    - nodejs
+
+- name: Deploy RelaJet-KWS-Web App
+  hosts: relajet-kws-web
+  vars:
+    app: relajet-kws-web
+    nginx_server_name: "{{ ansible_host }}"
+
+  roles:
+    - webApplication
+    - nginx
