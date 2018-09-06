@@ -45,6 +45,18 @@
     {
         "type": "shell",
         "script": "./example.sh"
+    },
+    {
+      "user": "ubuntu",
+      "type": "ansible",
+      "playbook_file": "../ansible/deploy-playbook.yml",
+      "extra_arguments": [
+        "--extra-vars", "node_version=9.11.2",
+        "--extra-vars", "application_repo_url=http://114.32.164.241:10078/RELAJET/RelaJet-KWS-web.git",
+        "--extra-vars", "application_dest=/home/ubuntu/example",
+        "--extra-vars", "application_dist_folder_name=dist",
+        "-vvvv"
+      ]
     }
   ]
 }

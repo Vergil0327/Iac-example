@@ -1,30 +1,78 @@
-## Infrastructure as Code (IaC)
-
 ### Drone CI/CD Server
 
-init > script (under this directory): $ `docker-compose up -d`
+init script (under this directory): `docker-compose up -d`
 
 ### CI Pipeline Example
 
-Please see `.drone.yml` under example folder
+Put *.drone.yml* under project root folder
+
+> Format of .drone.yml
+> Please see `.drone.yml` under example folder
 
 ---
 
-## Quick demo
+# Infrastructure as Code (IaC)
 
-- Step 1 - Packer Build AMI
+
+## Quick Example (Integration Packer with Ansible)
+
+set *Ansible* to provisioners (see provisioners section in packer/example-image.json)
+
+- Step 1 - Packer build AMI
+
+  under *packer* folder
+
+  > script: `packer build example-image.json`
+
+- Step 2 - Terraform build AMI image from Packer 
+
+  under *terraform* folder
+
+  - If haven't init terraform before
+    - script: `terraform init`
+
+  > script: `terraform apply`
+
+- Step 3 - See output
+
+  > ami_id
+  availability_zone
+  instance_state
+  instance_type
+  public_dns_name
+  public_ip
+  > tags = {
+  >     ENV = test
+  >     Name = IAC Example
+  > }
+
+---
+
+## Quick Example - IaC with packer/terraform/ansible (deprecated)
+
+You can see git commit
+
+> commit 025df2a7ab19524a3189d7e8962a269f4f17b328
+Author: vergil <vergil.wang@relajet.com>
+Date:   Thu Sep 6 17:18:30 2018 +0800
+
+- Step 1 - Packer build AMI
 
   > script: `packer build packer/example-image.json`
 
 - Step 2 - Terraform build infrastructure
 
-  > script: `terraform init` && `terraform apply`
+  > If haven't init terraform before, script: `terraform init`
+
+  > script: `terraform apply`
 
 - Step 3 - Start Ansible Playbook
 
   required: setup *ansible_host* in hosts.yml (you can get public dns from terraform output)
 
   > script: `ansible-playbook deploy-playbook.yml`
+
+## Devops Tools
 
 ### Packer
 
@@ -39,7 +87,8 @@ Packer is an open source tool for creating identical machine images for multiple
 - AWS_VPC_ID: need for create t2.micro AMI
 - AWS_SUBNET_ID: need for create t2.micro AMI
 
-> You can create .env.sh (see .env.sh.example) & `source .env.sh` in command-line
+> You can create .env.sh (see .env.sh.example) &
+`source .env.sh` in command-line
 
 > script: `packer build packer/example-image.json`
 
@@ -65,7 +114,8 @@ Terraform can manage existing and popular service providers as well as custom in
 - TF_VAR_AWS_SUBNET_ID: need for create t2.micro AMI
 - TF_VAR_AWS_AMI_ID: need for start an AWS instance by AMI from Packer
 
-> You can create .env.sh (see .env.sh.example) & `source .env.sh` in command-line
+> You can create .env.sh (see .env.sh.example) &
+`source .env.sh` in command-line
 
 > script: `terraform apply`
 
@@ -76,6 +126,8 @@ Ansible delivers simple IT automation that ends repetitive tasks and frees up De
 *required: setup below first*
 
 - ansible.cfg (need private_key_file)
+  - Create folder for private keys: `mkdir -p privateKeyFiles/aws`
+  - Put your private_key.pem under privateKeyFiles/aws & specify it in *private_key_file property* in *ansible.cfg*
 - hosts.yml
   - setup *ansible_host* from aws instance created from terraform
   - node_version MUST be full node version

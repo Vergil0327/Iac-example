@@ -16,7 +16,7 @@
     - nodejs
 
 - name: Deploy RelaJet-KWS-Web App
-  hosts: relajet-kws-web
+  hosts: all
   vars:
     app: relajet-kws-web
     nginx_server_name: "{{ ansible_host }}"
