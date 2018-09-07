@@ -126,7 +126,7 @@ resource "aws_instance" "relajet_kws_web" {
   vpc_security_group_ids = ["${aws_security_group.default.id}"]
 
   tags {
-    ENV = "test"
+    ENV = "dev"
     Name = "IAC Example"
   }
 
