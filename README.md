@@ -13,38 +13,35 @@ Put *.drone.yml* under project root folder
 
 # Infrastructure as Code (IaC)
 
+*See: relajet-kws-web folder*
 
 ## Quick Example (Integration Packer with Ansible)
 
-set *Ansible* to provisioners (see provisioners section in packer/example-image.json)
+set *Ansible* to provisioners (see provisioners section in packer/relajet-kws-web-image.json)
+
+- Setp 0 - Setup awscli (if use terraform remote backend)
+
+  for *mac*
+
+  > script: `pip install awscli`
+  > script: `aws configure`
 
 - Step 1 - Packer build AMI
 
   under *packer* folder
 
-  > script: `packer build example-image.json`
+  > script: `packer build relajet-kws-web-image.json`
 
 - Step 2 - Terraform build AMI image from Packer 
 
   under *terraform* folder
 
   - If haven't init terraform before
-    - script: `terraform init`
+    > script: `terraform init -backend-config config/backend-dev.conf`
 
   > script: `terraform apply`
 
 - Step 3 - See output
-
-  > ami_id
-  availability_zone
-  instance_state
-  instance_type
-  public_dns_name
-  public_ip
-  > tags = {
-  >     ENV = test
-  >     Name = IAC Example
-  > }
 
 ---
 
@@ -58,7 +55,7 @@ Date:   Thu Sep 6 17:18:30 2018 +0800
 
 - Step 1 - Packer build AMI
 
-  > script: `packer build packer/example-image.json`
+  > script: `packer build packer/relajet-kws-web-image.json`
 
 - Step 2 - Terraform build infrastructure
 
@@ -90,7 +87,7 @@ Packer is an open source tool for creating identical machine images for multiple
 > You can create .env.sh (see .env.sh.example) &
 `source .env.sh` in command-line
 
-> script: `packer build packer/example-image.json`
+> script: `packer build packer/relajet-kws-web-image.json`
 
 ### Terraform
 

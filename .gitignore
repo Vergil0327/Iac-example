@@ -2,13 +2,13 @@ node_modules
 .env
 
 # Packer
-packer/.env.sh
+relajet-kws-web/packer/.env.sh
 
 # Terraform
-terraform/.env.sh
-terraform/.terraform
-terraform.tfstate
-terraform.tfstate.backup
+relajet-kws-web/terraform/.env.sh
+relajet-kws-web/terraform/.terraform
+relajet-kws-web/terraform.tfstate
+relajet-kws-web/terraform.tfstate.backup
 
 # private keys
-privateKeyFiles/aws/*
+relajet-kws-web/privateKeyFiles/aws/*

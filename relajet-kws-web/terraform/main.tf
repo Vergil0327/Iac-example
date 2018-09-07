@@ -2,8 +2,6 @@
 # https://github.com/terraform-providers/terraform-provider-aws/blob/master/examples/two-tier/README.md
 # https://github.com/gruntwork-io/terratest/blob/master/examples/terraform-packer-example/main.tf
 
-# TODO: terraform_remote_state https://www.terraform.io/docs/backends/types/s3.html
-
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -24,7 +22,7 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "tag:Name"
-    values = ["example"]
+    values = ["relajet-kws-web-image"]
   }
 
 }
@@ -35,6 +33,42 @@ data "aws_vpc" "selected" {
 
 data "aws_subnet" "selected" {
   id ="${var.AWS_SUBNET_ID}"
+}
+
+# Remote terraform state file setup
+# create S3 bucket to store the state file
+resource "aws_s3_bucket" "terraform_state_storage_s3" {
+    bucket   = "terraform-remote-tfstate-storage-s3"
+
+    versioning {
+      enabled = true
+    }
+ 
+    lifecycle {
+      prevent_destroy = true
+    }
+ 
+    tags {
+      Name = "S3 Remote Terraform State Store"
+      ENV  = "dev"
+    }      
+}
+
+# create a dynamodb table for locking the state file
+resource "aws_dynamodb_table" "dynamodb-terraform-state-lock" {
+  name = "terraform-state-lock-dynamo"
+  hash_key = "LockID"
+  read_capacity = 20
+  write_capacity = 20
+ 
+  attribute {
+    name = "LockID"
+    type = "S"
+  }
+ 
+  tags {
+    Name = "DynamoDB Terraform State Lock Table"
+  }
 }
 
 # Our default security group to access the instances over SSH and HTTP
@@ -51,12 +85,20 @@ resource "aws_security_group" "default" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # HTTP access from the VPC
+  # HTTP access from the everywhere
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     # cidr_blocks = ["${data.aws_vpc.selected.cidr_block}"]
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # HTTPS access from everywhere
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -71,7 +113,8 @@ resource "aws_security_group" "default" {
 
 # Resource type is "aws_instance" and the name is "example."
 # The prefix of the type maps to the provider. 
-resource "aws_instance" "example" {
+
+resource "aws_instance" "relajet_kws_web" {
   ami           = "${data.aws_ami.ubuntu.id}"
   instance_type = "t2.micro"
   subnet_id     = "${data.aws_subnet.selected.id}"

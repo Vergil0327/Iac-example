@@ -10,7 +10,7 @@
     "access_key": "{{user `aws_access_key`}}",
     "secret_key": "{{user `aws_secret_key`}}",
     "type": "amazon-ebs",
-    "ami_name": "packer-example {{timestamp}}",
+    "ami_name": "packer-relajet-kws-web-image {{timestamp}}",
     "instance_type": "t2.micro",
     "region": "{{user `aws_region`}}",
     "vpc_id": "{{user `aws_vpc_id`}}",
@@ -26,7 +26,7 @@
     },
     "ssh_username": "ubuntu",
     "tags": {
-      "Name": "example"
+      "Name": "relajet-kws-web-image"
     }
   }],
   "provisioners": [
@@ -43,19 +43,14 @@
         ]
     },
     {
-        "type": "shell",
-        "script": "./example.sh"
-    },
-    {
       "user": "ubuntu",
       "type": "ansible",
       "playbook_file": "../ansible/deploy-playbook.yml",
       "extra_arguments": [
         "--extra-vars", "node_version=9.11.2",
         "--extra-vars", "application_repo_url=http://114.32.164.241:10078/RELAJET/RelaJet-KWS-web.git",
-        "--extra-vars", "application_dest=/home/ubuntu/example",
-        "--extra-vars", "application_dist_folder_name=dist",
-        "-vvvv"
+        "--extra-vars", "application_dest=/home/ubuntu/relajet-kws-web",
+        "--extra-vars", "application_dist_folder_name=dist"
       ]
     }
   ]
