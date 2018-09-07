@@ -116,6 +116,16 @@ Terraform can manage existing and popular service providers as well as custom in
 
 > script: `terraform apply`
 
+#### Destroy
+
+Destroy all
+
+> script: `terraform destroy`
+
+Destroy specific resource
+
+> script: `terraform destroy -target aws_instance=relajet_kws_web`
+
 ### Ansible
 
 Ansible delivers simple IT automation that ends repetitive tasks and frees up DevOps teams for more strategic work.
